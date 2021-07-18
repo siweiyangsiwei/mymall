@@ -4,6 +4,7 @@
     <home-swiper :banners = 'banners'></home-swiper>  
     <home-recommend-view :recommends="recommends"></home-recommend-view>
     <feature></feature>
+    <tab-control class="tab-control" :titles = "['流行','新款','精选']"></tab-control>
   </div>
 </template>
 
@@ -12,15 +13,16 @@ import NavBar from '../../components/common/navbar/NavBar'
 import HomeSwiper from './childComps/HomeSwiper'
 import HomeRecommendView from './childComps/HomeRecommendView.vue'
 import Feature from './childComps/Feature'
+import TabControl from '../../components/content/tabControl/TabControl'
 import {getHomeMultidata} from '../../network/home'
-
 
 export default {
   components: {
     NavBar,
     HomeSwiper,
     HomeRecommendView,
-    Feature
+    Feature,
+    TabControl,
   },
   data(){
     return {
@@ -39,7 +41,7 @@ export default {
 
 <style>
   #home{
-    height: 1000px;
+    height: 10000px;
     padding-top: 44px;/*加个外边距使其不会被nav遮住 */
   }
   .home-nav{
@@ -50,5 +52,9 @@ export default {
     top: 0;
     right: 0;
     z-index: 9;/*使其不会被轮播图遮住*/
+  }
+  .tab-control{
+    position: sticky;/*设置将这个tab保持在最上方 */
+    top: 44px;
   }
 </style>
