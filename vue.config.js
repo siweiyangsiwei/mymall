@@ -1,4 +1,4 @@
-const { resolve } = require("core-js/fn/promise");
+
 
 module.exports = {//导出我们的配置
 	configureWebpack:{//表示我们要配置我们webpack的config

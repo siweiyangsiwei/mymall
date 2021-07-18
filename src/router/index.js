@@ -8,7 +8,7 @@ const Profile = () => import('../views/profile/Profile')
 // 安装插件
 Vue.use(VueRouter)
 // 创建router
-const routers = [
+const routes = [
     {
         path:'',
         redirect: '/home'
@@ -31,7 +31,7 @@ const routers = [
       }
 ]
 const router = new VueRouter({
-    routers,
+    routes,
     mode:'history'
 })
 export default router
