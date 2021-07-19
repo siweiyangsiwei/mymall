@@ -28,6 +28,7 @@ export default {
     methods: {
         itemClick(index){//点击事件的函数
             this.currentIndex = index
+            this.$emit('tabClick',index)//子组件向外面传递事件使用自定义事件
         }
     }
 }
