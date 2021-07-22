@@ -1,13 +1,16 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
-    <home-swiper :banners = 'banners'></home-swiper>  
-    <home-recommend-view :recommends="recommends"></home-recommend-view>
-    <feature></feature>
-    <tab-control class="tab-control" 
-    :titles = "['流行','新款','精选']"
-    @tabClick = 'tabClick'></tab-control>
-    <goods-list :goods ="showGoods"></goods-list>
+    <scroll class="content" ref="scroll">
+      <home-swiper :banners = 'banners'></home-swiper>  
+      <home-recommend-view :recommends="recommends"></home-recommend-view>
+      <feature></feature>
+      <tab-control class="tab-control" 
+        :titles = "['流行','新款','精选']"
+        @tabClick = 'tabClick'></tab-control>
+      <goods-list :goods ="showGoods"></goods-list>
+    </scroll>
+    <back-top @click.native = 'backClick'></back-top>
   </div>
 </template>
 
@@ -15,10 +18,14 @@
 import NavBar from '../../components/common/navbar/NavBar'
 import TabControl from '../../components/content/tabControl/TabControl'
 import GoodsList from '../../components/content/goods/GoodsList'
+import BackTop from '../../components/content/backTop/BackTop'
+
 
 import HomeSwiper from './childComps/HomeSwiper'
 import HomeRecommendView from './childComps/HomeRecommendView.vue'
 import Feature from './childComps/Feature'
+
+import Scroll from '../../components/common/scroll/Scroll'
 
 import {getHomeMultidata ,getHomeGoods} from '../../network/home'
 export default {
@@ -29,6 +36,8 @@ export default {
     Feature,
     TabControl,
     GoodsList,
+    Scroll,
+    BackTop,
   },
   data(){
     return {
@@ -69,6 +78,9 @@ export default {
           break
       }
     },
+    backClick(){//组件的监听需要加native
+      this.$refs.scroll.scrollTo(0,0)
+    },
 
 
     //网络请求相关方法
@@ -93,10 +105,11 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   #home{
-    height: 10000px;
-    padding-top: 44px;/*加个外边距使其不会被nav遮住 */
+    height: 100000px;
+    /* padding-top: 44px;加个外边距使其不会被nav遮住 */
+    position: relative;
   }
   .home-nav{
     background-color:var(--color-tint);/*设置整个navbar的背景颜色 */
@@ -110,6 +123,14 @@ export default {
   .tab-control{
     position: sticky;/*设置将这个tab保持在最上方 */
     top: 44px;
-    z-index: 9;
+    z-index: 10;
+  }
+  .content{
+    height: 100px;
+    position: absolute;
+    top: 44px;
+    bottom: 49px;
+    right: 0;
+    left: 0;
   }
 </style>
