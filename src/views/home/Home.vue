@@ -1,16 +1,23 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
-    <scroll class="content" ref="scroll">
+    <scroll 
+    class="content" 
+    ref="scroll" 
+    :probe-type = "3" 
+    @scroll = 'contentScroll' 
+    :pullUpLoad = 'true'
+    @pullingUp = 'loadMore'>
       <home-swiper :banners = 'banners'></home-swiper>  
       <home-recommend-view :recommends="recommends"></home-recommend-view>
       <feature></feature>
-      <tab-control class="tab-control" 
+      <tab-control 
+        class="tab-control" 
         :titles = "['流行','新款','精选']"
         @tabClick = 'tabClick'></tab-control>
       <goods-list :goods ="showGoods"></goods-list>
     </scroll>
-    <back-top @click.native = 'backClick'></back-top>
+    <back-top @click.native = 'backClick' v-show = 'isShowBackTop'></back-top>
   </div>
 </template>
 
@@ -48,8 +55,8 @@ export default {
         'new':{page:0,list:[]},
         'sell':{page:0,list:[]},
       },
-      currentType:'pop'//作为事件监听的一个贮存变量
-
+      currentType:'pop',//作为事件监听的一个贮存变量
+      isShowBackTop:false,
     }
   },
   created(){//当组件创建完之后就需要马上发送网络请求了
@@ -81,6 +88,13 @@ export default {
     backClick(){//组件的监听需要加native
       this.$refs.scroll.scrollTo(0,0)
     },
+    contentScroll(pos){//发生滚动事件时调用的函数
+      this.isShowBackTop = (-pos.y) > 500
+    },
+    loadMore(){
+      console.log('加载')
+      this.getHomeGoods(this.currentType)
+    },
 
 
     //网络请求相关方法
@@ -99,6 +113,7 @@ export default {
         //this.goods[type].list.push(...res.data.list)
         // this.goods[type].page += 1
         // 由于没有接口，这个直接不写了
+        this.$refs.scroll.finishPullUp()
     })
     }
   }
@@ -107,7 +122,6 @@ export default {
 
 <style scoped>
   #home{
-    height: 100000px;
     /* padding-top: 44px;加个外边距使其不会被nav遮住 */
     position: relative;
   }
