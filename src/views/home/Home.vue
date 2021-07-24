@@ -1,6 +1,12 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
+    <tab-control 
+        class="tab-control" 
+        :titles = "['流行','新款','精选']"
+        @tabClick = 'tabClick'
+        ref = 'tabControl1'
+        v-show="isTabFixed"></tab-control>
     <scroll 
     class="content" 
     ref="scroll" 
@@ -8,13 +14,13 @@
     @scroll = 'contentScroll' 
     :pullUpLoad = 'true'
     @pullingUp = 'loadMore'>
-      <home-swiper :banners = 'banners'></home-swiper>  
+      <home-swiper :banners = 'banners' @swiperImageLoad = 'swiperImageLoad'></home-swiper>  
       <home-recommend-view :recommends="recommends"></home-recommend-view>
       <feature></feature>
       <tab-control 
-        class="tab-control" 
         :titles = "['流行','新款','精选']"
-        @tabClick = 'tabClick'></tab-control>
+        @tabClick = 'tabClick'
+        ref = 'tabControl2'></tab-control>
       <goods-list :goods ="showGoods"></goods-list>
     </scroll>
     <back-top @click.native = 'backClick' v-show = 'isShowBackTop'></back-top>
@@ -35,6 +41,7 @@ import Feature from './childComps/Feature'
 import Scroll from '../../components/common/scroll/Scroll'
 
 import {getHomeMultidata ,getHomeGoods} from '../../network/home'
+import {debounce} from '../../common/utils'
 export default {
   components: {
     NavBar,
@@ -57,6 +64,8 @@ export default {
       },
       currentType:'pop',//作为事件监听的一个贮存变量
       isShowBackTop:false,
+      tabOffsetTop:0,
+      isTabFixed:false,
     }
   },
   created(){//当组件创建完之后就需要马上发送网络请求了
@@ -64,6 +73,13 @@ export default {
     this.getHomeGoods('pop')//请求商品数据
     this.getHomeGoods('new')
     this.getHomeGoods('sell')
+    
+  },
+  mounted () {
+    const refresh = debounce(this.$refs.scroll.refresh,50)//防抖动函数，500毫秒之后就调用一次
+    this.$bus.$on('itemImgLoad', () => {//图片加载完成的事件监听
+      refresh()
+    })
   },
   computed: {
     showGoods(){
@@ -84,19 +100,21 @@ export default {
           this.currentType = 'sell'
           break
       }
+      this.$refs.tabControl1.currentIndex = index;
+      this.$refs.tabControl2.currentIndex = index
     },
     backClick(){//组件的监听需要加native
       this.$refs.scroll.scrollTo(0,0)
     },
     contentScroll(pos){//发生滚动事件时调用的函数
-      this.isShowBackTop = (-pos.y) > 500
+      this.isShowBackTop = (-pos.y) > 500//判断backtop是否显示
+      this.isTabFixed = (-pos.y) > this.tabOffsetTop
+      
     },
     loadMore(){
       console.log('加载')
       this.getHomeGoods(this.currentType)
     },
-
-
     //网络请求相关方法
     getHomeMultidata(){
       getHomeMultidata().then(res => {
@@ -113,8 +131,11 @@ export default {
         //this.goods[type].list.push(...res.data.list)
         // this.goods[type].page += 1
         // 由于没有接口，这个直接不写了
-        this.$refs.scroll.finishPullUp()
+        this.$refs.scroll.finishPullUp()//完成上拉加载更多。以便之后再次执行这个上拉加载
     })
+    },
+    swiperImageLoad(){//当图片加载完之后获取这个swiper的高度
+      this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop//但是不能直接获取组件的offsettop，要使用组件中的$el属性来获取组件的元素的高度
     }
   }
 }
@@ -122,29 +143,33 @@ export default {
 
 <style scoped>
   #home{
-    /* padding-top: 44px;加个外边距使其不会被nav遮住 */
     position: relative;
   }
   .home-nav{
     background-color:var(--color-tint);/*设置整个navbar的背景颜色 */
     color: white;/*设置文字颜色 */
-    position:fixed;/*设置固定定位，在页面中一直显示 */
-    left: 0;
-    top: 0;
-    right: 0;
-    z-index: 9;/*使其不会被轮播图遮住*/
+    /* position:fixed;设置固定定位，在页面中一直显示 
+      left: 0; 
+      top: 0; 
+      right: 0; 
+      z-index: 9;使其不会被轮播图遮住 
+      由于我们后面使用的是better-scroll的滚动，就不需要这个fixed属性了
+
+      */
+      position: relative;
+      z-index: 9;
   }
   .tab-control{
-    position: sticky;/*设置将这个tab保持在最上方 */
-    top: 44px;
-    z-index: 10;
+    position: relative;
+    z-index: 9;
   }
   .content{
-    height: 100px;
+    /* height: 100px; */
     position: absolute;
     top: 44px;
     bottom: 49px;
     right: 0;
     left: 0;
   }
+
 </style>

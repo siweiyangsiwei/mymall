@@ -28,7 +28,6 @@ export default {
         this.scroll = new BScroll(this.$refs.wrapper,{
             probeType:this.probeType,
             click:true,
-            mouseWheel:true,
             pullUpLoad:this.pullUpLoad
         })
         // this.scroll.scrollTo(0,0)
@@ -44,10 +43,13 @@ export default {
    
     methods: {
         scrollTo(x,y,time=500){
-            this.scroll.scrollTo(x,y,time)
+            this.scroll && this.scroll.scrollTo(x,y,time)
         },
         finishPullUp(){
             this.scroll.finishPullUp()
+        },
+        refresh(){
+            this.scroll && this.scroll.refresh()//这里加一个与判断可以解决在没有挂载上的时候就不会调用这个函数，也就不会报错了
         }
     }
 }
