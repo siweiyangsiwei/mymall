@@ -1,5 +1,5 @@
 <template>
-  <div class="goods-item">
+  <div class="goods-item" @click = 'itemClick'>
       <img src="goodsItems.show.img" alt="" @load="imgLoad">
       <div class="goods-info">
           <p>{{goodsItem.title}}</p>
@@ -22,6 +22,9 @@ export default {
     methods: {
         imgLoad(){
             this.$bus.$emit('itemImgLoad')//事件总线监听图片加载发射事件
+        },
+        itemClick(){
+            this.$router.push('/datail' + this.goodsItem.iid)
         }
     }
 }
@@ -32,6 +35,8 @@ export default {
         padding-bottom: 40px;/*给下面的文字留空间 */
         position: relative;/*子绝父相 */
         width: 48%;
+        height: 10px;
+        background-color: aquamarine;
     }
 
     .goods-item img {
