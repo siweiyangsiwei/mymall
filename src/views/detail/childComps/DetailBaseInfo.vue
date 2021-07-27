@@ -1,5 +1,5 @@
 <template>
-	<div v-if="Object.keys(goods).length !== 0">
+	<div>
 		<div class="title">{{goods.title}}</div>
 		<div class="price-wrap">
 			<div class="new-price">{{goods.price}}</div>
