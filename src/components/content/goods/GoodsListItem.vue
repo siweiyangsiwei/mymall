@@ -1,6 +1,6 @@
 <template>
   <div class="goods-item" @click = 'itemClick'>
-      <img src="goodsItems.show.img" alt="" @load="imgLoad">
+      <img src="showImage" alt="" @load="imgLoad">
       <div class="goods-info">
           <p>{{goodsItem.title}}</p>
           <span class="price">{{goodsItem.price}}</span>
@@ -19,9 +19,19 @@ export default {
             }
         }
     },
+    computed: {
+      showImage(){//不同的页面中image的位置不同，使用计算属性来做一个判断
+          return this.goodsItem.image || this.goodsItem.show.img
+      }  
+    },
     methods: {
         imgLoad(){
             this.$bus.$emit('itemImgLoad')//事件总线监听图片加载发射事件
+            // if(this.$route.path.indexOf('/home')){
+            //     this.$bus.$emit('homeItemImgLoad')
+            // }else if(this.$route.path.indexOf('/detail')){
+            //     this.$bus.$emit('detailItemImgLoad')
+            // }通过路由的方式来判断在不同的页面发送这个图片加载完成的监听事件，解决在detail页面gooditem发生点击时home触发这个事件的bug
         },
         itemClick(){
             this.$router.push('/datail' + this.goodsItem.iid)

@@ -42,6 +42,7 @@ import Scroll from '../../components/common/scroll/Scroll'
 
 import {getHomeMultidata ,getHomeGoods} from '../../network/home'
 import {debounce} from '../../common/utils'
+import {itemListenerMixin} from '../../common/mixin'
 export default {
   components: {
     NavBar,
@@ -53,6 +54,9 @@ export default {
     Scroll,
     BackTop,
   },
+  mixins: [//通过混入导入一些在别的页面也需要用的相同的代码
+    itemListenerMixin
+  ],
   data(){
     return {
       banners:[],
@@ -75,11 +79,11 @@ export default {
     this.getHomeGoods('sell')
     
   },
+  deactivated () {
+    this.$bus.$off('itemImageLoad',this.itemImglistener)//当这个页面不活跃时取消这个事件的监听
+  },
   mounted () {
-    const refresh = debounce(this.$refs.scroll.refresh,50)//防抖动函数，500毫秒之后就调用一次
-    this.$bus.$on('itemImgLoad', () => {//图片加载完成的事件监听
-      refresh()
-    })
+    
   },
   computed: {
     showGoods(){

@@ -7,6 +7,11 @@ export function getDetail(iid){
         }
     })
 }
+export function getRecommend(){//获取推荐数据网络请求
+    return request({
+        url:'/recommend'
+    })
+}
 export class Goods {//定义一个类整合数据
     constructor(itemInfo,columns,services){
         this.title = itemInfo.title
