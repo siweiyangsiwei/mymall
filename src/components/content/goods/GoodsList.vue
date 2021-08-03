@@ -1,6 +1,8 @@
 <template>
   <div class="goods">
+      <button @click = 'btnClick'>按钮</button>
       <goods-list-item v-for="item in goods" :key="item.index" :goodsItem = 'item'></goods-list-item>
+
   </div>
 </template>
 
@@ -16,6 +18,11 @@ export default {
             default(){
                 return []
             }
+        }
+    },
+    methods: {
+        btnClick(){
+            this.$toast.show('显示button的内容')
         }
     }
 }

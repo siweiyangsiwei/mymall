@@ -41,7 +41,7 @@ export default {
         DetailParamInfo,
         DetailCommentInfo,
         GoodsList,
-        DetailBottomBar 
+        DetailBottomBar,
     },
     mixins: [//混入
         itemListenerMixin
@@ -95,7 +95,9 @@ export default {
             // product.price = this.Goods.realPrice
             // product.iid = this.Goods.iid
             //将商品添加都购物车里面vuex
-            this.$store.commit('addCart',product)
+            this.$store.dispatch('addCart',product).then(res => {//在dispatch这个addCart函数时，里面会返回一个promise函数，并且会传回一些参数，我们需要调用then函数来接收这个参数
+                console.log(res)
+            })
         }
     },
     created(){
