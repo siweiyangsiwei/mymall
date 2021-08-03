@@ -1,7 +1,7 @@
 <template>
   <div id="detail">
-      <detail-nav-bar class="detail-nav" @titleClick = 'titleClick'></detail-nav-bar>
-      <scroll class="content" ref="scroll">
+      <detail-nav-bar class="detail-nav" @titleClick = 'titleClick' ref="detail-nav"></detail-nav-bar>
+      <scroll class="content" ref="scroll" @scroll = 'contentScroll' :probe-type = '3'>
         <detail-swiper :top-images = 'topImages'></detail-swiper>
         <detail-base-info :goods = 'goods'></detail-base-info>
         <detail-shop-info :shop = 'shop'></detail-shop-info>
@@ -10,6 +10,7 @@
         <detail-comment-info ref="comment" :commentInfo = 'commentInfo'></detail-comment-info>
         <goods-list ref="recommend" :goods = 'recommends'></goods-list>
       </scroll>
+      <detail-bottom-bar @addCart = 'addToCart'></detail-bottom-bar>
   </div>
 </template>
 
@@ -22,6 +23,7 @@ import DetailGoodsInfo from './childComps/DetailGoodsInfo'
 import DetailParamInfo from './childComps/DetailParamInfo'
 import DetailCommentInfo from './childComps/DetailCommentInfo'
 import GoodsList from '../../components/content/goods/GoodsList'
+import DetailBottomBar from './childComps/DetailBottomBar'
 
 import Scroll from '../../components/common/scroll/Scroll'
 
@@ -38,7 +40,8 @@ export default {
         DetailGoodsInfo,
         DetailParamInfo,
         DetailCommentInfo,
-        GoodsList 
+        GoodsList,
+        DetailBottomBar 
     },
     mixins: [//混入
         itemListenerMixin
@@ -54,7 +57,8 @@ export default {
             commentInfo:{},
             recommends:[],
             themeTopYs:[],
-            getThemeTopY:null
+            getThemeTopY:null,
+            currentIndex:0
         }
     },
     methods: {
@@ -66,7 +70,33 @@ export default {
         titleClick(index){
         // this.$refs.scroll.scrollTo(0,this.themeTopYs[index],500)再发生点击事件是进行一个跳转的操作
         console.log(index)
-    }  
+    },
+        contentScroll(pos){
+            const  posY = -pos.posY
+            let length = this.themeTopYs.length
+            for(let i = 0; i < length ; i++){
+                if(//做出一个判断，这个语法比较复杂，好好看，虽然能解决问题，但是这个判断会执行很多次，所以可以再加一个判断
+                    this.currnetIndex !== i &&
+                    ((i < length - 1 && posY >thie.themeTopYs[i] && posY < themeTopYs[i+1])
+                     ||//或
+                    (i === length - 1 && posY > this.themeTopYs[i])))
+                    {
+                    this.currentIndex = i
+                    this.$refs.nav.currentIndex = this.currentIndex
+                }
+            }
+        },
+        addToCart(){
+            //发生添加到购物车的事件后，将所有需要的信息传过去
+            const product = {}
+            // product.image = this.topImages[0]
+            // product.title = this.Goods.title
+            // product.desc = this.Goods.desc
+            // product.price = this.Goods.realPrice
+            // product.iid = this.Goods.iid
+            //将商品添加都购物车里面vuex
+            this.$store.commit('addCart',product)
+        }
     },
     created(){
         this.iid = this.$route.params.iid//通过路由获取iid

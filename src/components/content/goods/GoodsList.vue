@@ -23,7 +23,7 @@ export default {
 
 <style>
     .goods{
-        height: 1000px;
+        height: 10000px;
         display: flex;/*这个会将所有的元素都塞在一行里面 */
         background-color: aqua;
         flex-wrap: wrap;/*设置这个就会根据每个元素的大小来分配多少行 */

@@ -1,14 +1,13 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
-    <tab-control 
-        class="tab-control" 
+    <tab-control  
         :titles = "['流行','新款','精选']"
         @tabClick = 'tabClick'
         ref = 'tabControl1'
         v-show="isTabFixed"></tab-control>
     <scroll 
-    class="content" 
+    class="home-content" 
     ref="scroll" 
     :probe-type = "3" 
     @scroll = 'contentScroll' 
@@ -20,7 +19,8 @@
       <tab-control 
         :titles = "['流行','新款','精选']"
         @tabClick = 'tabClick'
-        ref = 'tabControl2'></tab-control>
+        ref = 'tabControl2'
+        v-show="!isTabFixed"></tab-control>
       <goods-list :goods ="showGoods"></goods-list>
     </scroll>
     <back-top @click.native = 'backClick' v-show = 'isShowBackTop'></back-top>
@@ -147,7 +147,7 @@ export default {
 
 <style scoped>
   #home{
-    position: relative;
+    height: 100vh;
   }
   .home-nav{
     background-color:var(--color-tint);/*设置整个navbar的背景颜色 */
@@ -160,20 +160,11 @@ export default {
       由于我们后面使用的是better-scroll的滚动，就不需要这个fixed属性了
 
       */
-      position: relative;
-      z-index: 9;
   }
-  .tab-control{
-    position: relative;
-    z-index: 9;
-  }
-  .content{
+  .home-content{
     /* height: 100px; */
-    position: absolute;
-    top: 44px;
-    bottom: 49px;
-    right: 0;
-    left: 0;
+    height: calc(100% - 44px - 49px);
+    overflow: hidden;
   }
 
 </style>
